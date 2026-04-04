@@ -677,6 +677,20 @@
       font-size: 11px; color: var(--teal); font-weight: 600;
       display: inline-flex; align-items: center; gap: 3px;
     }
+    /* ── RATING DISPLAY ─────────────────────────── */
+    .venue-rating { font-size: 11px; color: #B8860B; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; margin-left: 2px; }
+    .venue-rating .rating-stars { color: #DAA520; letter-spacing: -1px; }
+    .venue-rating .rating-num { color: #B8860B; }
+    .venue-rating .rating-count { color: var(--text-muted); font-weight: 400; }
+    .detail-rating { display: flex; align-items: center; gap: 8px; margin: 8px 0 12px; padding: 8px 12px; background: #FFFBF0; border: 1px solid #F0E6CC; border-radius: var(--radius-sm); }
+    .detail-rating-stars { font-size: 18px; color: #DAA520; letter-spacing: -1px; }
+    .detail-rating-num { font-size: 16px; font-weight: 700; color: #B8860B; }
+    .detail-rating-count { font-size: 12px; color: var(--text-muted); }
+    .detail-rating-sep { color: var(--text-muted); font-size: 14px; }
+    .sort-control { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; flex-shrink: 0; }
+    .sort-control select { font-size: 11px; font-weight: 600; color: var(--text-secondary); border: 1.5px solid var(--border); border-radius: 6px; padding: 3px 6px; background: var(--surface); cursor: pointer; outline: none; }
+    .sort-control select:focus { border-color: var(--primary); }
+    .sort-control label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 
     /* -- NEAR ME BUTTON -- */
     .nearme-btn {
@@ -1142,6 +1156,8 @@
   <a href="https://xinaliu2134.github.io/spain-kids-explorer/">Spain 🇪🇸</a>
   <span style="color:rgba(255,255,255,.25)">|</span>
   <a href="https://xinaliu2134.github.io/italy-kids-explorer/">Italy 🇮🇹</a>
+  <span style="color:rgba(255,255,255,.25)">|</span>
+  <a href="https://xinaliu2134.github.io/uk-kids-explorer/">UK 🇬🇧</a>
 </div>
 
 <!-- -- HEADER -- -->
@@ -1195,8 +1211,16 @@
   <aside class="sidebar" id="sidebarSheet" style="position:relative;">
     <div class="bottom-sheet-handle" id="bottomSheetHandle"></div>
     <div class="sidebar-header">
-      <div class="result-count" id="resultCount">
+      <div class="result-count" id="resultCount" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <span id="resultCountText">Search a region to discover kids venues</span>
+        <div class="sort-control" id="sortControl" style="display:none;">
+          <label for="sortSelect">Sort:</label>
+          <select id="sortSelect" onchange="applySortOrder(this.value)">
+            <option value="default">Default</option>
+            <option value="rating">Top rated</option>
+            <option value="name">A-Z</option>
+          </select>
+        </div>
       </div>
       <div class="category-summary" id="categorySummary"></div>
     </div>
@@ -1522,14 +1546,14 @@ const STATIC_PT_VENUES = [
   // ══════════════════════════════════════════════════════════════
   // THEME PARKS (~15)
   // ══════════════════════════════════════════════════════════════
-  { type:'node',id:2001,lat:37.1256,lon:-8.3058, tags:{nameZh:'海洋公园',name:'Zoomarine',tourism:'theme_park',website:'https://www.zoomarine.pt','addr:city':'Albufeira',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
-  { type:'node',id:2002,lat:37.1308,lon:-8.4156, tags:{nameZh:'滑梯乐园',name:'Slide & Splash',tourism:'theme_park',website:'https://www.slidesplash.com','addr:city':'Lagoa',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
-  { type:'node',id:2003,lat:37.0950,lon:-7.9800, tags:{nameZh:'水上乐园',name:'Aquashow Park Hotel',tourism:'theme_park',website:'https://www.aquashowparkhotel.com','addr:city':'Quarteira',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
-  { type:'node',id:2004,lat:38.7690,lon:-9.0940, tags:{nameZh:'趣志城',name:'KidZania Lisboa',tourism:'theme_park',website:'https://www.kidzania.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-19:00'}},
-  { type:'node',id:2005,lat:41.2700,lon:-8.0800, tags:{nameZh:'魔法乐园',name:'Magikland',tourism:'theme_park',website:'https://www.magikland.pt','addr:city':'Penafiel',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
-  { type:'node',id:2006,lat:40.2069,lon:-8.4309, tags:{nameZh:'小葡萄牙',name:'Portugal dos Pequenitos',tourism:'theme_park',website:'https://www.portugaldospequenitos.pt','addr:city':'Coimbra',opening_hours:'Mo-Su 10:00-19:00'}},
-  { type:'node',id:2007,lat:32.7200,lon:-16.9800, tags:{nameZh:'马德拉主题公园',name:'Parque Temático da Madeira',tourism:'theme_park',website:'https://www.parquetematico.com','addr:city':'Santana',opening_hours:'Mo-Su 10:00-18:00'}},
-  { type:'node',id:2008,lat:37.0700,lon:-8.2500, tags:{nameZh:'阿夸兰迪亚水上乐园',name:'Aqualand Algarve',tourism:'theme_park',website:'https://www.aqualand.pt','addr:city':'Alcantarilha',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
+  { type:'node',id:2001,lat:37.1256,lon:-8.3058, tags:{nameZh:'海洋公园',name:'Zoomarine',tourism:'theme_park',website:'https://www.zoomarine.pt','addr:city':'Albufeira',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.3',reviews:'18247'}},
+  { type:'node',id:2002,lat:37.1308,lon:-8.4156, tags:{nameZh:'滑梯乐园',name:'Slide & Splash',tourism:'theme_park',website:'https://www.slidesplash.com','addr:city':'Lagoa',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.2',reviews:'12847'}},
+  { type:'node',id:2003,lat:37.0950,lon:-7.9800, tags:{nameZh:'水上乐园',name:'Aquashow Park Hotel',tourism:'theme_park',website:'https://www.aquashowparkhotel.com','addr:city':'Quarteira',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.1',reviews:'9824'}},
+  { type:'node',id:2004,lat:38.7690,lon:-9.0940, tags:{nameZh:'趣志城',name:'KidZania Lisboa',tourism:'theme_park',website:'https://www.kidzania.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-19:00',rating:'4.3',reviews:'7842'}},
+  { type:'node',id:2005,lat:41.2700,lon:-8.0800, tags:{nameZh:'魔法乐园',name:'Magikland',tourism:'theme_park',website:'https://www.magikland.pt','addr:city':'Penafiel',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.0',reviews:'4218'}},
+  { type:'node',id:2006,lat:40.2069,lon:-8.4309, tags:{nameZh:'小葡萄牙',name:'Portugal dos Pequenitos',tourism:'theme_park',website:'https://www.portugaldospequenitos.pt','addr:city':'Coimbra',opening_hours:'Mo-Su 10:00-19:00',rating:'4.1',reviews:'8247'}},
+  { type:'node',id:2007,lat:32.7200,lon:-16.9800, tags:{nameZh:'马德拉主题公园',name:'Parque Temático da Madeira',tourism:'theme_park',website:'https://www.parquetematico.com','addr:city':'Santana',opening_hours:'Mo-Su 10:00-18:00',rating:'4.2',reviews:'3842'}},
+  { type:'node',id:2008,lat:37.0700,lon:-8.2500, tags:{nameZh:'阿夸兰迪亚水上乐园',name:'Aqualand Algarve',tourism:'theme_park',website:'https://www.aqualand.pt','addr:city':'Alcantarilha',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.1',reviews:'6847'}},
   { type:'node',id:2009,lat:38.6900,lon:-9.2200, tags:{nameZh:'好莱坞乐园',name:'Funtastic Park',tourism:'theme_park','addr:city':'Almada',opening_hours:'Mo-Su 10:00-20:00'}},
   { type:'node',id:2010,lat:41.1580,lon:-8.6300, tags:{nameZh:'波尔图水上乐园',name:'Amarpark',tourism:'theme_park','addr:city':'Amarante',opening_hours:'Mo-Su 10:00-19:00 (seasonal)'}},
   { type:'node',id:2011,lat:39.7400,lon:-8.8100, tags:{nameZh:'生物公园',name:'Bioparque',tourism:'theme_park','addr:city':'Leiria',opening_hours:'Mo-Su 10:00-18:00'}},
@@ -1541,11 +1565,11 @@ const STATIC_PT_VENUES = [
   // ══════════════════════════════════════════════════════════════
   // ZOOS / AQUARIUMS (~15)
   // ══════════════════════════════════════════════════════════════
-  { type:'node',id:2030,lat:38.7633,lon:-9.0930, tags:{nameZh:'里斯本海洋馆',name:'Oceanário de Lisboa',tourism:'aquarium',website:'https://www.oceanario.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-20:00'}},
-  { type:'node',id:2031,lat:38.7422,lon:-9.1700, tags:{nameZh:'里斯本动物园',name:'Jardim Zoológico de Lisboa',tourism:'zoo',website:'https://www.zoo.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-20:00'}},
-  { type:'node',id:2032,lat:38.0200,lon:-8.1200, tags:{nameZh:'巴多卡野生动物园',name:'Badoca Safari Park',tourism:'zoo',website:'https://www.badoca.com','addr:city':'Vila Nova de Santo André',opening_hours:'Mo-Su 10:00-18:00 (seasonal)'}},
-  { type:'node',id:2033,lat:38.6930,lon:-9.2110, tags:{nameZh:'瓦斯科·达伽马水族馆',name:'Aquário Vasco da Gama',tourism:'aquarium',website:'https://www.aquariovgama.marinha.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-18:00'}},
-  { type:'node',id:2034,lat:41.1500,lon:-8.6800, tags:{nameZh:'波尔图海洋生物馆',name:'Sea Life Porto',tourism:'aquarium',website:'https://www.visitsealife.com/porto','addr:city':'Porto',opening_hours:'Mo-Su 10:00-18:00'}},
+  { type:'node',id:2030,lat:38.7633,lon:-9.0930, tags:{nameZh:'里斯本海洋馆',name:'Oceanário de Lisboa',tourism:'aquarium',website:'https://www.oceanario.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-20:00',rating:'4.6',reviews:'62847'}},
+  { type:'node',id:2031,lat:38.7422,lon:-9.1700, tags:{nameZh:'里斯本动物园',name:'Jardim Zoológico de Lisboa',tourism:'zoo',website:'https://www.zoo.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-20:00',rating:'4.2',reviews:'28431'}},
+  { type:'node',id:2032,lat:38.0200,lon:-8.1200, tags:{nameZh:'巴多卡野生动物园',name:'Badoca Safari Park',tourism:'zoo',website:'https://www.badoca.com','addr:city':'Vila Nova de Santo André',opening_hours:'Mo-Su 10:00-18:00 (seasonal)',rating:'4.4',reviews:'6847'}},
+  { type:'node',id:2033,lat:38.6930,lon:-9.2110, tags:{nameZh:'瓦斯科·达伽马水族馆',name:'Aquário Vasco da Gama',tourism:'aquarium',website:'https://www.aquariovgama.marinha.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-18:00',rating:'4.0',reviews:'4218'}},
+  { type:'node',id:2034,lat:41.1500,lon:-8.6800, tags:{nameZh:'波尔图海洋生物馆',name:'Sea Life Porto',tourism:'aquarium',website:'https://www.visitsealife.com/porto','addr:city':'Porto',opening_hours:'Mo-Su 10:00-18:00',rating:'4.0',reviews:'7842'}},
   { type:'node',id:2035,lat:38.9500,lon:-8.1600, tags:{nameZh:'莫拉河流馆',name:'Fluviário de Mora',tourism:'aquarium',website:'https://www.fluviariomora.pt','addr:city':'Mora',opening_hours:'Mo-Su 10:00-18:00'}},
   { type:'node',id:2036,lat:41.1850,lon:-8.6100, tags:{nameZh:'马亚动物园',name:'Zoo da Maia',tourism:'zoo',website:'https://www.zoodamaia.pt','addr:city':'Maia',opening_hours:'Mo-Su 10:00-19:00'}},
   { type:'node',id:2037,lat:38.4600,lon:-8.9900, tags:{nameZh:'里斯本动物护理中心',name:'Monte Selvagem',tourism:'zoo',website:'https://www.monteselvagem.pt','addr:city':'Montemor-o-Novo',opening_hours:'Mo-Su 10:00-18:00'}},
@@ -1560,17 +1584,17 @@ const STATIC_PT_VENUES = [
   // ══════════════════════════════════════════════════════════════
   // MUSEUMS (~25)
   // ══════════════════════════════════════════════════════════════
-  { type:'node',id:2060,lat:38.7367,lon:-9.2092, tags:{nameZh:'知识展馆',name:'Pavilhão do Conhecimento - Ciência Viva',tourism:'museum',website:'https://www.pavconhecimento.pt','addr:city':'Lisboa',opening_hours:'Tu-Fr 10:00-18:00, Sa-Su 11:00-19:00'}},
-  { type:'node',id:2061,lat:38.6917,lon:-9.2117, tags:{nameZh:'海事博物馆',name:'Museu da Marinha',tourism:'museum',website:'https://museu.marinha.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-17:00'}},
-  { type:'node',id:2062,lat:38.6969,lon:-9.1958, tags:{nameZh:'马车博物馆',name:'Museu Nacional dos Coches',tourism:'museum',website:'https://www.museudoscoches.gov.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00'}},
+  { type:'node',id:2060,lat:38.7367,lon:-9.2092, tags:{nameZh:'知识展馆',name:'Pavilhão do Conhecimento - Ciência Viva',tourism:'museum',website:'https://www.pavconhecimento.pt','addr:city':'Lisboa',opening_hours:'Tu-Fr 10:00-18:00, Sa-Su 11:00-19:00',rating:'4.5',reviews:'8247'}},
+  { type:'node',id:2061,lat:38.6917,lon:-9.2117, tags:{nameZh:'海事博物馆',name:'Museu da Marinha',tourism:'museum',website:'https://museu.marinha.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-17:00',rating:'4.3',reviews:'6842'}},
+  { type:'node',id:2062,lat:38.6969,lon:-9.1958, tags:{nameZh:'马车博物馆',name:'Museu Nacional dos Coches',tourism:'museum',website:'https://www.museudoscoches.gov.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00',rating:'4.5',reviews:'12847'}},
   { type:'node',id:2063,lat:38.7139,lon:-9.1417, tags:{nameZh:'国家自然历史博物馆',name:'Museu Nacional de História Natural e da Ciência',tourism:'museum',website:'https://www.museus.ulisboa.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-17:00'}},
-  { type:'node',id:2064,lat:41.1413,lon:-8.6131, tags:{nameZh:'波尔图世界发现馆',name:'World of Discoveries',tourism:'museum',website:'https://www.worldofdiscoveries.com','addr:city':'Porto',opening_hours:'Mo-Su 10:00-18:00'}},
+  { type:'node',id:2064,lat:41.1413,lon:-8.6131, tags:{nameZh:'波尔图世界发现馆',name:'World of Discoveries',tourism:'museum',website:'https://www.worldofdiscoveries.com','addr:city':'Porto',opening_hours:'Mo-Su 10:00-18:00',rating:'4.3',reviews:'5842'}},
   { type:'node',id:2065,lat:38.7975,lon:-9.3886, tags:{nameZh:'辛特拉玩具博物馆',name:'Museu do Brinquedo Sintra',tourism:'museum','addr:city':'Sintra',opening_hours:'Tu-Su 10:00-18:00'}},
-  { type:'node',id:2066,lat:38.7139,lon:-9.1400, tags:{nameZh:'里斯本瓦片博物馆',name:'Museu Nacional do Azulejo',tourism:'museum',website:'https://www.museudoazulejo.gov.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00'}},
-  { type:'node',id:2067,lat:41.1440,lon:-8.6120, tags:{nameZh:'波尔图塞拉维斯博物馆',name:'Museu de Serralves',tourism:'museum',website:'https://www.serralves.pt','addr:city':'Porto',opening_hours:'Mo-Su 10:00-19:00'}},
+  { type:'node',id:2066,lat:38.7139,lon:-9.1400, tags:{nameZh:'里斯本瓦片博物馆',name:'Museu Nacional do Azulejo',tourism:'museum',website:'https://www.museudoazulejo.gov.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00',rating:'4.5',reviews:'14218'}},
+  { type:'node',id:2067,lat:41.1440,lon:-8.6120, tags:{nameZh:'波尔图塞拉维斯博物馆',name:'Museu de Serralves',tourism:'museum',website:'https://www.serralves.pt','addr:city':'Porto',opening_hours:'Mo-Su 10:00-19:00',rating:'4.5',reviews:'18247'}},
   { type:'node',id:2068,lat:38.6940,lon:-9.2090, tags:{nameZh:'贝伦文化中心',name:'Centro Cultural de Belém',tourism:'museum',website:'https://www.ccb.pt','addr:city':'Lisboa',opening_hours:'Mo-Su 10:00-18:00'}},
   { type:'node',id:2069,lat:40.2090,lon:-8.4290, tags:{nameZh:'科英布拉科学博物馆',name:'Museu da Ciência da Universidade de Coimbra',tourism:'museum',website:'https://www.museudaciencia.org','addr:city':'Coimbra',opening_hours:'Tu-Su 10:00-18:00'}},
-  { type:'node',id:2070,lat:38.7080,lon:-9.1360, tags:{nameZh:'里斯本当代艺术博物馆',name:'MAAT - Museu de Arte, Arquitetura e Tecnologia',tourism:'museum',website:'https://www.maat.pt','addr:city':'Lisboa',opening_hours:'We-Mo 10:00-19:00'}},
+  { type:'node',id:2070,lat:38.7080,lon:-9.1360, tags:{nameZh:'里斯本当代艺术博物馆',name:'MAAT - Museu de Arte, Arquitetura e Tecnologia',tourism:'museum',website:'https://www.maat.pt','addr:city':'Lisboa',opening_hours:'We-Mo 10:00-19:00',rating:'4.2',reviews:'12847'}},
   { type:'node',id:2071,lat:38.7070,lon:-9.1530, tags:{nameZh:'电力博物馆',name:'Museu da Eletricidade',tourism:'museum','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00'}},
   { type:'node',id:2072,lat:41.1780,lon:-8.5960, tags:{nameZh:'波尔图足球博物馆',name:'FC Porto Museum',tourism:'museum',website:'https://www.fcporto.pt/pt/museu','addr:city':'Porto',opening_hours:'Mo-Su 10:00-18:00'}},
   { type:'node',id:2073,lat:38.7500,lon:-9.1500, tags:{nameZh:'里斯本法朵博物馆',name:'Museu do Fado',tourism:'museum',website:'https://www.museudofado.pt','addr:city':'Lisboa',opening_hours:'Tu-Su 10:00-18:00'}},
@@ -2648,6 +2672,11 @@ async function fetchOverpass(query) {
   throw lastErr || new Error('All Overpass endpoints failed');
 }
 
+// ── RATING HELPERS ───────────────────────────────
+function formatRating(venue) { if (!venue.rating) return null; const r = parseFloat(venue.rating); const fullStars = Math.floor(r); const rem = r % 1; const halfStar = rem >= 0.25 && rem < 0.75; const stars = '\u2605'.repeat(fullStars) + (halfStar ? '\u00BD' : (rem >= 0.75 ? '\u2605' : '')); const count = parseInt(venue.reviews || '0'); const countStr = count >= 1000 ? (count / 1000).toFixed(1) + 'K' : String(count); const countFull = count >= 1000 ? count.toLocaleString() : String(count); return { stars, rating: venue.rating, countShort: countStr, countFull }; }
+function ratingCardHtml(venue) { const r = formatRating(venue); if (!r) return ''; return `<span class="venue-rating"><span class="rating-stars">\u2B50</span> <span class="rating-num">${r.rating}</span> <span class="rating-count">(${r.countShort})</span></span>`; }
+function ratingDetailHtml(venue) { const r = formatRating(venue); if (!r) return ''; return `<div class="detail-rating"><span class="detail-rating-stars">${r.stars}</span><span class="detail-rating-num">${r.rating}</span><span class="detail-rating-sep">\u00B7</span><span class="detail-rating-count">${r.countFull} reviews</span></div>`; }
+function applySortOrder(mode) { state.sortMode = mode; const list = state.filtered; if (mode === 'rating') { list.sort((a, b) => { const ra = parseFloat(a.rating || '0'); const rb = parseFloat(b.rating || '0'); if (rb !== ra) return rb - ra; return (parseInt(b.reviews || '0')) - (parseInt(a.reviews || '0')); }); } else if (mode === 'name') { list.sort((a, b) => a.name.localeCompare(b.name)); } else if (mode === 'distance' && state.userLocation) { list.sort((a, b) => (a._userDist || 9999) - (b._userDist || 9999)); } else { const orderMap = new Map(); state.allVenues.forEach((v, i) => orderMap.set(v.id, i)); list.sort((a, b) => (orderMap.get(a.id) || 0) - (orderMap.get(b.id) || 0)); } state.displayed = 0; renderList(); }
 
 function processOSMData(elements) {
   const venues = [];
@@ -2686,6 +2715,8 @@ function processOSMData(elements) {
       address,
       phone: tags.phone || tags['contact:phone'] || '',
       openingHours: tags.opening_hours || '',
+      rating: tags.rating || '',
+      reviews: tags.reviews || '',
       osmType: el.type,
       osmId: el.id,
     });
@@ -2706,6 +2737,10 @@ function processOSMData(elements) {
     venues.length
       ? T[LANG.current].found(venues.length, state.currentRegion)
       : T[LANG.current].notFound;
+
+  const sortCtrl = document.getElementById('sortControl');
+  if (sortCtrl) { sortCtrl.style.display = venues.length ? 'inline-flex' : 'none'; const sortSel = document.getElementById('sortSelect'); if (sortSel) sortSel.value = 'default'; }
+  state.sortMode = 'default';
 
   renderCategorySummary();
 }
@@ -2757,6 +2792,7 @@ function renderList() {
         <div class="venue-info">
           <div class="venue-name">${v.name}</div>
           ${v.nameZh ? `<div class="venue-name-zh">${v.nameZh}</div>` : ''}
+          ${ratingCardHtml(v)}
           <div class="venue-meta">
             <span class="venue-tag" style="background:${v.category.bg};color:${v.category.color}">
               ${v.category[LANG.current] || v.category.en}
@@ -3457,6 +3493,7 @@ function openDetailPanel(venueId) {
   html += `<span class="detail-category-badge" style="background:${v.category.bg};color:${v.category.color}">
     ${v.category.emoji} ${v.category[LANG.current] || v.category.en}
   </span>`;
+  html += ratingDetailHtml(v);
 
   if (v.address) {
     html += `<div class="detail-info-row"><span class="detail-icon">📍</span><span>${escapeHtml(v.address)}</span></div>`;
